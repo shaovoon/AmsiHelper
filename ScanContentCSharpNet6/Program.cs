@@ -1,4 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿// The MIT License (MIT)
+// Windows AntiMalware Scan Interface Helper 1.0.0
+// Copyright (C) 2022 by Shao Voon Wong (shaovoon@yahoo.com)
+//
+// http://opensource.org/licenses/MIT
+
 using ScanContentCSharpNet6;
 
 /*

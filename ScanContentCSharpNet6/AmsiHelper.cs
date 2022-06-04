@@ -1,8 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿// The MIT License (MIT)
+// Windows AntiMalware Scan Interface Helper 1.0.0
+// Copyright (C) 2022 by Shao Voon Wong (shaovoon@yahoo.com)
+//
+// http://opensource.org/licenses/MIT
+
+using System;
 
 namespace ScanContentCSharpNet6
 {
