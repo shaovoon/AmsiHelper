@@ -1,7 +1,7 @@
 # AmsiHelper
 Antimalware Scan Interface Helper for Windows 10/11
 
-[Tutorial on CodeProject](https://www.codeproject.com/Articles/5331133/Bring-Antimalware-Scanning-Into-Your-NET-6-Applica)
+[Tutorial on CodeProject](https://www.codeproject.com/Articles/5331133/Bring-Antimalware-Scanning-into-your-Application)
 
 CSharp example of using the helper class
 
