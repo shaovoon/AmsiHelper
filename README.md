@@ -21,9 +21,13 @@ This article is divided into two main sections: the raw API section and the wrap
 
 __Note__: The function definitions listed in this section have been converted through P/Invoke. For instance, the `HRESULT` return type has been changed to `uint` and the handle types for the context and session are changed to `IntPtr`. To use AMSI, a context must be first created with `AmsiInitialize()`. Supply&nbsp;your application name in&nbsp;`appName&nbsp;`parameter. The function returns&nbsp;a `HRESULT `where&nbsp;`S_OK&nbsp;`(0) means success. An AMSI context may&nbsp;fail&nbsp;to initialize when&nbsp;Microsoft Defender is disabled and no other anti-malware product&nbsp;is present on the user&#39;s computer.
 
+CSharp code:
+
 ```CSharp
 uint AmsiInitialize(String appName, out IntPtr amsiContext);
 ```
+
+C++ code:
 
 ```Cpp
 HRESULT AmsiInitialize(LPCWSTR appName, HAMSICONTEXT *amsiContext);
@@ -31,9 +35,13 @@ HRESULT AmsiInitialize(LPCWSTR appName, HAMSICONTEXT *amsiContext);
 
 After use, the context must be uninitialized with a call to&nbsp;`AmsiUninitialize()`.
 
+CSharp code:
+
 ```CSharp
 void AmsiUninitialize(IntPtr amsiContext);
 ```
+
+C++ code:
 
 ```Cpp
 void AmsiUninitialize(HAMSICONTEXT amsiContext);
@@ -43,9 +51,13 @@ void AmsiUninitialize(HAMSICONTEXT amsiContext);
 
 To do scanning, if you do not want to group the scannings under a session or when you only have one content to scan, a session is not required. To open a session, call&nbsp;`AmsiOpenSession()` with the context created from&nbsp;`AmsiInitialize().`
 
+CSharp code:
+
 ```CSharp
 uint AmsiOpenSession(IntPtr amsiContext, out IntPtr amsiSession);
 ```
+
+C++ code:
 
 ```Cpp
 HRESULT AmsiOpenSession(HAMSICONTEXT amsiContext, HAMSISESSION *amsiSession);
@@ -53,9 +65,13 @@ HRESULT AmsiOpenSession(HAMSICONTEXT amsiContext, HAMSISESSION *amsiSession);
 
 After the scanning is done, close the session with a call to `AmsiCloseSession()`&nbsp;with the same&nbsp;context supplied to `AmsiOpenSession()`.
 
+CSharp code:
+
 ```CSharp
 void AmsiCloseSession(IntPtr amsiContext, IntPtr amsiSession);
 ```
+
+C++ code:
 
 ```Cpp
 void AmsiCloseSession(HAMSICONTEXT amsiContext, HAMSISESSION amsiSession);
@@ -65,10 +81,14 @@ void AmsiCloseSession(HAMSICONTEXT amsiContext, HAMSISESSION amsiSession);
 
 There are two types of scanning: string and binary buffer. Use `AmsiScanString()`&nbsp;to scan text and the `AmsiScanBuffer()` to scan buffer. `contentName` is either the filename or the URL where this content is from. `amsiSession` can be `IntPtr.Zero`&nbsp;for&nbsp;not providing a&nbsp;session. `result` is the output of these functions. `IsMalware()`&nbsp;must be called on `result` to check&nbsp;if it indicates&nbsp;malware. Other parameters are self-explanatory. The function returns&nbsp;a `HRESULT `where&nbsp;`S_OK&nbsp;`(0) means success. `AmsiScanString()` is&nbsp;called on the&nbsp;script written in Powershell, JavaScript, VBScript&nbsp;or&nbsp;Office VBA macros.
 
+CSharp code:
+
 ```CSharp
 uint AmsiScanString(IntPtr amsiContext, String text, String contentName,
             IntPtr amsiSession, out uint result);
 ```
+
+C++ code:
 
 ```Cpp
 HRESULT AmsiScanString(HAMSICONTEXT amsiContext, LPCWSTR string, 
@@ -78,10 +98,14 @@ HRESULT AmsiScanString(HAMSICONTEXT amsiContext, LPCWSTR string,
 
 `AmsiScanBuffer()` is for scanning a binary buffer that could&nbsp;contain a malicious executable program. An example scenario is&nbsp;your software implements a plugin system where any third party can supply their own plugins to extend your software, it is advisable to call `AmsiScanBuffer()` to&nbsp;scan the DLLs prior to loading and running them.
 
+CSharp code:
+
 ```CSharp
 uint AmsiScanBuffer(IntPtr amsiContext, IntPtr buffer, uint length, String contentName,
             IntPtr amsiSession, out uint result);
 ```
+
+C++ code:
 
 ```Cpp
 HRESULT AmsiScanBuffer(HAMSICONTEXT amsiContext, PVOID buffer, ULONG length, 
@@ -91,10 +115,14 @@ HRESULT AmsiScanBuffer(HAMSICONTEXT amsiContext, PVOID buffer, ULONG length,
 
 `AmsiNotifyOperation()` is to notify the anti-malware in the case that malware is found. No session is required to call this function. It is best not to assume scanning is done in `AmsiNotifyOperation` because this function may not be implemented by third-party anti-malware vendors, so do not rely on the `result`.
 
+CSharp code:
+
 ```CSharp
 uint AmsiNotifyOperation(IntPtr amsiContext, IntPtr buffer, 
                          uint length, String contentName, out uint result);
 ```
+
+C++ code:
 
 ```Cpp
 HRESULT AmsiNotifyOperation(HAMSICONTEXT amsiContext, PVOID buffer, ULONG length,
@@ -103,12 +131,16 @@ HRESULT AmsiNotifyOperation(HAMSICONTEXT amsiContext, PVOID buffer, ULONG length
 
 `IsMalware`&nbsp;is defined as&nbsp;below:
 
+CSharp code:
+
 ```CSharp
 bool IsMalware(uint result)
 {
     return (result >= 32768);
 }
 ```
+
+C++ code:
 
 ```Cpp
 bool IsMalware(AMSI_RESULT result)
@@ -120,6 +152,8 @@ bool IsMalware(AMSI_RESULT result)
 ## Raw Win32 Functions Example
 
 Below is an example of using the raw Win32 AMSI functions.
+
+CSharp code:
 
 ```CSharp
 // Example of using the raw AMSI functions
@@ -158,6 +192,8 @@ AmsiMethods.AmsiCloseSession(amsiContext, amsiSession);
 
 AmsiMethods.AmsiUninitialize(amsiContext);
 ```
+
+C++ code:
 
 ```Cpp
 // Example of using the raw AMSI functions
@@ -199,6 +235,8 @@ AmsiUninitialize(amsiContext);
 
 A wrapper called `AmsiHelper` is written to simplify the AMSI usage. A context and session are created in the constructor and destroyed in the&nbsp;finalizer. Its `public` methods are listed below:
 
+CSharp code:
+
 ```CSharp
 AmsiHelper(string appName);  // Constructor
 ~AmsiHelper(string appName); // Finalizer
@@ -211,6 +249,8 @@ bool ScanBuffer(IntPtr buffer, uint length,
 bool NotifyOperation(IntPtr buffer, uint length, string contentName, 
                      out bool isMalware); // Notify anti-malware of this buffer
 ```
+
+C++ code:
 
 ```Cpp
 AmsiHelper();  // Constructor
@@ -228,6 +268,8 @@ bool NotifyOperation(PVOID buffer, ULONG length, LPCWSTR contentName,
 ## Wrapper Class Example
 
 Below is an example of using the `AmsiHelper`.
+
+CSharp code:
 
 ```CSharp
 // Example of using the AMSI wrapper class: AmsiHelper
@@ -248,6 +290,8 @@ using (AmsiHelper amsi = new AmsiHelper("ScanContentCSharp"))
     }
 }
 ```
+
+C++ code:
 
 ```Cpp
 // Example of using the AMSI wrapper class: AmsiHelper
